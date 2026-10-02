@@ -5,3 +5,7 @@ __pycache__/
 node_modules/
 *.pyc
 dist/
+# curl cookie jars
+*.txt
+!requirements*.txt
+!CMakeLists.txt

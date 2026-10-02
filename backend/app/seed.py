@@ -1,9 +1,6 @@
-from passlib.context import CryptContext
-
+from app.auth import pwd_context
 from app.database import SessionLocal
 from app.models import Lead, User
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 USERS = [
     {"name": "Admin", "email": "admin@leaddesk.test", "password": "Admin@123", "role": "admin"},
