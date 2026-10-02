@@ -178,3 +178,126 @@ body {
   text-align: center;
   margin-top: 4rem;
 }
+
+/* ---- Tables ---- */
+
+.table-container {
+  overflow-x: auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+  font-size: 0.875rem;
+}
+
+thead {
+  background: #f0f1f3;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.625rem 0.75rem;
+  white-space: nowrap;
+}
+
+tbody tr:not(:last-child) {
+  border-bottom: 1px solid #eee;
+}
+
+tbody tr:hover {
+  background: #fafafe;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+/* ---- Status badges ---- */
+
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.badge-new { background: #dbeafe; color: #1e40af; }
+.badge-contacted { background: #fef3c7; color: #92400e; }
+.badge-qualified { background: #d1fae5; color: #065f46; }
+.badge-lost { background: #fee2e2; color: #991b1b; }
+
+/* ---- State messages ---- */
+
+.state-msg {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #666;
+}
+
+.error-text {
+  color: #b91c1c;
+  margin-bottom: 0.75rem;
+}
+
+.success-msg {
+  background: #ecfdf5;
+  color: #065f46;
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+/* ---- Add lead form ---- */
+
+.add-lead-form {
+  background: #fff;
+  padding: 1.25rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  margin-bottom: 1.5rem;
+}
+
+.add-lead-form h3 {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem 1rem;
+}
+
+.form-grid .form-group {
+  margin-bottom: 0;
+}
+
+.form-grid select {
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid #d0d5dd;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: #fff;
+}
+
+.form-submit {
+  display: flex;
+  align-items: flex-end;
+}
+
+@media (max-width: 640px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}

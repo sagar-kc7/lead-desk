@@ -36,10 +36,12 @@ export default function Login() {
       const home = user.role === 'admin' ? '/admin' : '/dashboard'
       navigate(returnTo || home, { replace: true })
     } catch (err: unknown) {
-      const msg =
-        (err as { response?: { data?: { error?: string } } })?.response?.data?.error
-        || 'Login failed'
-      setApiError(msg)
+      const res = (err as { response?: { status?: number; data?: { error?: string } } })?.response
+      if (!res || res.status >= 500) {
+        setApiError("Can't reach the server, please try again")
+      } else {
+        setApiError(res.data?.error || 'Login failed')
+      }
     } finally {
       setSubmitting(false)
     }
