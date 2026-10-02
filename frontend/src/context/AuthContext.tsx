@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
-import api from '../api'
+import { useNavigate } from 'react-router-dom'
+import api, { setOnAuthFailure } from '../api'
 
 export interface User {
   id: number
@@ -20,6 +21,15 @@ const AuthContext = createContext<AuthContextType | null>(null)
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    setOnAuthFailure(() => {
+      setUser(null)
+      navigate('/login', { replace: true })
+    })
+    return () => setOnAuthFailure(null)
+  }, [navigate])
 
   useEffect(() => {
     api.get('/auth/me')
