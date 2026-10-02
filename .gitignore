@@ -5,6 +5,7 @@ __pycache__/
 node_modules/
 *.pyc
 dist/
+.pytest_cache/
 # curl cookie jars
 *.txt
 !requirements*.txt
