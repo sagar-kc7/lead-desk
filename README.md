@@ -113,4 +113,29 @@ All endpoints use the `/api` prefix.
 
 ## Explanation
 
-> To be written.
+### Auth flow
+When a user logs in, the backend checks the email and password. Passwords are stored as bcrypt hashes. If the login is correct, the backend sets two httpOnly cookies: an access token (a JWT that lasts 15 minutes) and a refresh token (a random string that lasts 7 days). The refresh cookie is only sent to `/api/auth`. In the database I store only a SHA-256 hash of the refresh token, never the token itself.
+
+When the access token expires, the frontend calls `/api/auth/refresh`. The backend gives back a new access token and a new refresh token, and marks the old refresh token as revoked. If someone sends an old refresh token again, the backend rejects it and revokes all active tokens for that user. On logout, the refresh token is revoked in the database and both cookies are cleared.
+
+### Refresh handling
+All frontend requests go through one Axios client. When a request gets a 401, the client calls refresh and then retries the request once. There is one shared "refresh in progress" promise. If many requests fail at the same time, they all wait for that same promise, so only one refresh call is made. This matters because a second refresh with the same token would look like a stolen token and log the user out. If the refresh fails, the user state is cleared and the user goes to `/login`. Login and refresh requests are skipped by this logic, so it cannot loop.
+
+### Role-based access
+Roles are checked on the backend. The `require_admin` dependency returns 403 when a member calls `/api/admin/users`, and 401 when the user is not logged in. For leads, members only get rows where `owner_id` is their own id. The owner of a new lead always comes from the logged-in user, never from the request body.
+
+On the frontend, route guards redirect people: logged-out users go to `/login`, members who open `/admin` go to `/forbidden`, and after login an admin goes to `/admin` and a member to `/dashboard`. These redirects are only for a good user experience. The real protection is on the backend. On page reload, the app calls `/api/auth/me` to restore the session.
+
+### Docker setup
+The `db` service starts first and has a `pg_isready` healthcheck. The backend waits until the database is healthy. When it starts, it runs the Alembic migrations and the seed, then serves requests. `[check: migrations run in app startup]` Its healthcheck calls `/api/health`. The frontend starts after the backend. `[check: depends_on backend]` The backend runs as `appuser` and the frontend runs as the `nginx` user, so neither runs as root. The frontend image is built in two stages, and Nginx serves the built app and proxies `/api` to the backend. This keeps everything on one origin, so I did not need any CORS settings. The database port is not published to the host.
+
+### Decisions and trade-offs
+I chose FastAPI because validation and error handling are quick to write and easy to read. SQLAlchemy and Alembic give me a proper model and real migrations. On the frontend I used React with Vite and TypeScript, and Axios because its interceptors make the refresh logic simple.
+
+With more time I would replace `python-jose` and `passlib` with PyJWT and `bcrypt` directly, because the tests show deprecation warnings from them. I would also run migrations in an entrypoint script instead of at app startup, and split the dev requirements (pytest, httpx) from the production ones.
+
+### What is not finished
+I did not do pagination, search, rate limiting, admin edit or delete for leads, frontend tests, or a CI workflow. The access token lifetime must be a whole number of minutes, so the 1-minute test works but fractions do not. `[check: the tests build their schema with create_all instead of running the migrations, so they do not test the migrations themselves. Delete this sentence if you switched to alembic.]`
+
+### AI tools
+I used Claude Code to write much of the code.
